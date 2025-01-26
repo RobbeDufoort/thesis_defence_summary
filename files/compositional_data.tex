@@ -1,0 +1,39 @@
+\section{Compositional data}
+
+The major issue we face in the thesis, is that the data is compositional in nature.
+The observed cell counts from the sequencing experiment only capture relative information as the number of cells observed for a particular sample does not reflect the total number of cells in the sample, but is constrained to an arbitrary sum.
+Due to this, we need to use techniques from the field of compositional data analysis to perform corret inference on the unobserved absolute cell counts using the observed data that only contains relative information.
+
+Compositional data exists in a simplex space with 1 fewer dimensions than components. 
+Analysis of relative data as if they were absolute data often leads to erroneous results due the following reasons.
+First, most statistical models assuming independence between features.
+However, due to the inverse correlation between the features vialotes this assumptions, as the features are mutually dependent.
+Next, distances between samples are misleading and sensitive to arbitrary inclusion or exclusion of components.
+Lastly, components can appear correlated, even when they are statistically independ.
+
+\textit{Quinn et al.} propose to call each sample in the data a composition and each feature (in our case cell type) a component. 
+They further propose three methods of dealing with the analysis of compositional data.
+First, they discuss the 'normalization-dependent' approach. 
+In this approach, normalization is used in order to reclaim absolute abundances.
+However, most methods have assumptions that are not valid outside of thightly controlled experiments.
+The second approach is 'transformation-dependent'.
+The idea is to transform the data with regard to a reference to make statistical inference relative to that reference.
+Lastly, the 'transformation-independ' approach performs calculations directly on the components or component ratios.
+
+In the thesis, we use a transfomration-dependent method: the centered-log-ratio (CLR) transformation (Formula \ref{formula:CLR}).
+The reference to which the data is transformed, is the geometric mean of the sample vector.
+
+\begin{equation}
+    \begin{split}
+    clr(x_j) &= \left[ln \frac{x_{1,j}}{g(x_j)}, \ldots, ln \frac{x_{D,j}}{g(x_j)}\right] \\
+    g(x_j) &= \left(\prod_{j = 0}^D x_j \right)^{1/D}
+    \end{split}
+    \label{formula:CLR}
+\end{equation}
+
+Other modeling approaches that we do not get into with the thesis are the following.
+People have tried count models for each population, often modeling them using NB models.
+The total number of observed cells is added as an offset, however this model does not account for compositionlity.
+Next, compositional count models have been used, most commonly the Dirichlet-multinomial model.
+This accounts for compositionality as the multinomial parameters must sum to 1.
+Dirichlet allows Multinomial parameters to change by sample, and it is a Bayesian model.

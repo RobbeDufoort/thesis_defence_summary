@@ -1,0 +1,31 @@
+% Preamble
+\documentclass{article} % This command is used to set the type of document you are working on such as an article, book, or presenation
+\usepackage{amsmath}  % This package allows the use of a large range of mathematical formula, commands, and symbols
+\usepackage{amssymb} % This package allows to use more symbols like curvy L
+\usepackage{graphicx}  % This package allows the importing of images
+
+\graphicspath{{./figs/}}
+\setlength{\parskip}{0.5cm}
+\setlength{\parindent}{0pt}
+
+% Document
+\begin{document}
+    % Title
+    \begin{center}
+        \Large{\textbf{Theory Defence}}
+    \end{center}
+    \vspace{15pt}
+
+    % Sections
+    \input{files/linear_regression.tex}
+    \input{files/compositional_data.tex}
+    \section{VoomCLR}
+        \input{files/limma.tex}
+        \input{files/voomCLR.tex}
+    \section{Causal inference}
+    
+    % Terms
+    \newpage
+    \input{files/terms.tex}
+
+\end{document}

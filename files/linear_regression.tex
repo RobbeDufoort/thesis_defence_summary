@@ -1,0 +1,130 @@
+\section{Linear regression}
+
+In the thesis we use linear regression models in order to model the CLR transformed counts for the different cell types.
+This is a summary of what was seen in the linear modeling course by Els Goetghebeur.
+
+\subsection{Simple linear regression}
+\subsubsection{Notation}
+\begin{itemize}
+    \item Capitalized letters (e.g. Y) are random variables. They have a mean and variance.
+    \item Small letters (e.g. x, y) are fixed constants or observed values.
+    \item Indices are donoted by \textit{i} or \textit{j}.
+\end{itemize}
+
+\subsubsection{Meaning and interpretation}
+Regression only shows association between the the dependent and independent variables.
+It is not because two things tend to go in the same direction, that a change in one is \textit{causing} the change in the other.
+It is possible that they are both causally responding to a third factor that is changing.
+Causal relationships need additional assumptions and/or data to be interpreted.
+
+\subsubsection{Regression model formally}
+A regression model describes a statistical relationship between a random variable $Y$ and a fixed x or random $X$.
+It describes how the distribution of the random variable $Y$ varies with given values of x, and the association between $Y$ and x.
+
+The simple regression model captures this by a parametric form for the distribution $Y$ for every level of x (e.g. the normal distribution with $\mu_x$ and $\sigma_x^2$), and a functional form for the means of these distributions $\mu_x$, which may depend on unknown parameters (e.g. $\mu_x = \beta_0 + \beta_1 x$).
+
+\subsubsection{The simple linear regression model}
+
+The Simple Linear Regression model takes the following form (Formula \ref{formula:SLR}). 
+
+\begin{equation}
+    Y_i = \beta_0 + \beta_1 x_1 + \epsilon_i \ with \ \epsilon_i \ \text{iid} \ N(0, \sigma^2)
+    \label{formula:SLR}
+\end{equation}
+
+The model is characterized by the following elements:
+\begin{itemize}
+    \item $E(Y_i|x_i) = \beta_0 + \beta_1 x_i$
+    \item $Var(Y_i|x_i) = \sigma^2$
+    \item $E(\epsilon_i) = 0$
+    \item $Var(\epsilon_i)$ is constant
+    \item The observations are independent (no correlation between any $Y_i, Y_j$)
+    \item The data is normally distributed
+\end{itemize}
+
+\subsubsection{Interpretation of the coefficients}
+$\beta_0$ is the intercept.
+It shows the intersection with the y-axis and often does not have an interpretation.
+It does have an interpretation when x is centered or standardized, as it then signifies the $Y$ for the average x.
+$\beta_1$ is the slope of the regression line.
+Per unit increase in x, the $Y$ is expected to increase with an amount equal to $\beta_1$.
+
+\subsubsection{Estimation of the regression function}
+The regression coefficients are determined using \textit{ordinary least squares}.
+This methods finds the optimal values of $\beta_0$ and $\beta_1$ that minimize the q-function (Formula \ref{formula:q_function}).
+This q-function is the sum of the squared residuals.
+
+\begin{equation}
+    q(\beta_0, \beta_1) = \sum_{i=1}^{n} \left(y_i - (\beta_0 + \beta_1 x_i)\right)^2
+    \label{formula:q_function}
+\end{equation}
+
+One can try to solve this minimization problem numerically, however it is much feasible in an analytical way.
+For this, the normal equations are used (Formula \ref{formula:normal_equations}), which result in point estimates for $\beta_0$ and $\beta_1$.
+These normal equations are acquired by taking the derivative of the q-value towards $\beta_0$ and $\beta_1$, respectively.
+
+\begin{equation}
+    \begin{array}{ll}
+        \left\{
+            \begin{array}{ll}
+                \sum y_i = n\beta_0 + \beta_1 \sum x_i \\
+                \sum x_i y_i = \beta_0 \sum x_i + \beta_1 \sum x_i^2
+            \end{array}
+        \right. \\ [10pt]
+
+        \left\{
+            \begin{array}{ll}
+                \beta_0 = \bar{y} - \beta_1 \bar{x} \\
+                \beta_1 = \frac{\sum_{i=1}^n (x_i - \bar{x}) (y_i - \bar{y})}{\sum_{i=1}^{n} (x_i - \bar{x})^2} = \frac{Cov(x,y)}{Var(x)}
+            \end{array}
+        \right.
+    \end{array}
+    \label{formula:normal_equations}
+\end{equation}
+
+\subsubsection{Estimation of the variance}
+
+We know that the expected value of $y_i$ equals $\mu$ and the variance equals $\sigma^2$.
+In an ideal world, this is an unbiased estimator, however, we do not know the value of $\mu$ in real life.
+For this reason we can calculate the variance by taking the squared difference over the real and predicted value, and then dividing by the number of samples.
+This estimator is biased though, as we do need to account for the unknown $\mu$.
+By dividing by the number of samples minus 2 (as we use two times $y$ in the formula), we get an unbiased estimator for the variance, which we call the MSE (Formula \ref{formula:mse}).
+
+\begin{equation}
+    MSE = \frac{\sum_{i=1}^n (Y_i - \hat{Y}_i)^2}{n - 2} = \frac{\sum_{i=1}^n E_i^2}{n - 2}
+    \label{formula:mse}
+\end{equation}
+
+\subsubsection{Parameter estimation using MLE}
+
+Maximum Likelihood Estimation can also be used in order to fit the parameters of the linear regression model.
+This works by maximizing the probability density function of $Y$ given a model (Formula \ref{formula:mle_linear_regression}), in this under the assumption that $Y$ is normally distributed.
+From the density distribution, we see that we have to estimate three parameters: $\beta_0$, $\beta_1$ and $\sigma^2$.
+Although, to do this, we need calculate the loglikelihood, as maximizing a sum is far easier than maximizing a product.
+By taking the partial derivatives towards the parameters of interest, we can derive an estimator for them.
+As can be seen, for $beta_0$ and $beta_1$, we get the same normal equations (Formula \ref{formula:normal_equations}) as seen previously.
+
+\begin{equation}
+    \begin{aligned}
+        f(y|\theta) &= \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(- \frac{\left[y - (\beta_0 + \beta_1x)\right]^2}{2\sigma^2}\right), \\[10pt]
+        \mathcal{L}(\beta_0, \beta_1, \sigma^2) &= \prod_{i=1}^n \left\{ \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{1}{2} \left[\frac{Y_i-\beta_0-\beta_1x_i}{\sigma}\right]^2\right)\right\},
+    \end{aligned}
+\end{equation}
+
+\begin{equation}
+    \begin{aligned}
+    \text{where} \quad 
+    \left\{
+    \begin{aligned}
+        \frac{d \log (\mathcal{L})}{d\beta_0} &= \frac{1}{\sigma^2} \sum\left(Y_i - \beta_0 - \beta_1x_i\right) = 0, \\
+        \frac{d \log (\mathcal{L})}{d\beta_1} &= \frac{1}{\sigma^2} \sum x_i \left(Y_i - \beta_0 - \beta_1x_i\right) = 0, \\
+        \frac{d \log (\mathcal{L})}{d\sigma^2} &= -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum \left(Y_i - \beta_0 - \beta_1 x_i\right)^2 = 0
+    \end{aligned}
+    \right. \\[10pt]
+    \text{with results:} \quad \hat{\beta}_0 = B_0, \quad \hat{\beta}_1 = B_1, \quad \hat{\sigma}^2 = \frac{\sum(Y_i - \hat{Y}_i)^2}{n}.
+    \end{aligned}
+\end{equation}
+    
+    
+    
+

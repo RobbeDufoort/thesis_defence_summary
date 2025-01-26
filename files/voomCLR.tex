@@ -1,0 +1,34 @@
+\subsection{VoomCLR}
+Next, we show how VoomCLR uses the Limma-Voom framework in order to account for compositional bias and the bias on the effect sizes.
+The first thing VoomCLR does, is CLR transforming the cell counts (Formula \ref{formula:CLR}).
+This is performed to deal with the composition bias.
+However, compositional transformations do not stabalize the variance (it is a function of the mean).
+For this reason, the transformed counts are inputed into the Limma framework to first account for the mean-variance structure using heteroscedasticity weights.
+Next, the authors of the LinDA paper saw that the CLR transformation in combination with linear models result in biased effect sizes in respect to the effect sizes one would obtain based on the absolute abundances.
+In order to correct for this, the mode of the effect size across cell types is used.
+
+Next, we will explain why this is used as a correction.
+If we consider a log-linear model on the absolute abundance $X_{ip}$, we get \ref{formula:loglinearXip}.
+By assuming that the CLR transformed relative abundance $Y_{ip}$ can be written as the CLR transformed absolute abundance plus an estimation error $e_{ip}$, we can say that the model looks as follows (Formula \ref{formula:clr_model}).
+
+\begin{equation}
+    \log X_{ip} = C_i^T \beta_p + \epsilon_{ip}
+    \label{formula:loglinearXip}
+\end{equation}
+
+\begin{align}
+    \log \left\{\frac{Y_{ip}}{\left(\sum_p Y_{ip}\right)^{i/p}}\right\} &= \log X_{ip} + e_{ip} - \left\{\frac{1}{p} \sum_p \log (X_{ip} + e_{ip})\right\} \\
+        &= C_i^T (\beta_p - \bar{\beta}) + (e_{ip} - \bar{\epsilon}_i)
+    \label{formula:clr_model}
+\end{align}
+
+From this follows that when modeling CLR-transformed data, you are provided with estimates for $\beta_p - \bar{\beta}$, while we want estimates for $\beta_p$.
+Next, an additional assumption is taken: the mode of $\beta_p$ across $p$ is zero.
+Given this assumption, $\bar{\beta}$ can be estimated by shifting the histogram of our estimates of $\beta_p - \bar{\beta}$ such that it has a mode of zero.
+The shift is our estimate for $\bar{\beta}$, i.e., $\hat{\bar{\beta}}$.
+
+The now bias corrected estimates are used in the models.
+The residual variance of the linear model is shrunken using Empirical Bayes and using the shrinked variance, moderated t- and F-statistics are calculated on the parameter.
+The t-test tests to the null hypothesis that the coefficient is equal to zero.
+The F-test tests to the null hypothesis that the model has at least one non-zero coefficient.
+The F-statistic is calculated as $\frac{MSR}{MSE}$, with MSR the variation explained by the model and MSE the residual unexplained variation.
