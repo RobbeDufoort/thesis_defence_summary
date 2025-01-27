@@ -102,13 +102,14 @@ This works by maximizing the probability density function of $Y$ given a model (
 From the density distribution, we see that we have to estimate three parameters: $\beta_0$, $\beta_1$ and $\sigma^2$.
 Although, to do this, we need calculate the loglikelihood, as maximizing a sum is far easier than maximizing a product.
 By taking the partial derivatives towards the parameters of interest, we can derive an estimator for them.
-As can be seen, for $beta_0$ and $beta_1$, we get the same normal equations (Formula \ref{formula:normal_equations}) as seen previously.
+As can be seen, for $\beta_0$ and $\beta_1$, we get the same normal equations (Formula \ref{formula:normal_equations}) as seen previously.
 
 \begin{equation}
     \begin{aligned}
         f(y|\theta) &= \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(- \frac{\left[y - (\beta_0 + \beta_1x)\right]^2}{2\sigma^2}\right), \\[10pt]
         \mathcal{L}(\beta_0, \beta_1, \sigma^2) &= \prod_{i=1}^n \left\{ \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{1}{2} \left[\frac{Y_i-\beta_0-\beta_1x_i}{\sigma}\right]^2\right)\right\},
     \end{aligned}
+    \label{formula:mle_linear_regression}
 \end{equation}
 
 \begin{equation}
@@ -125,6 +126,71 @@ As can be seen, for $beta_0$ and $beta_1$, we get the same normal equations (For
     \end{aligned}
 \end{equation}
     
-    
-    
+\subsection{Inference on the coefficients}
+\subsubsection{Confidence intervals}
 
+The confidence interval is the range in which the true value of $\beta_1$ is in, with 95\% certainty.
+
+\begin{equation}
+    CI = \left[\beta_1 \pm t(\frac{1 - \alpha}{2}; n-2) S(\beta_1) \right]
+\end{equation}
+
+\subsubsection{Two-sided t-test}
+In order to test whether the estimate for $\beta_1$ is different from zero.
+For this we set up the following hypotheses:
+
+\begin{align}
+    H_0&: \beta_1 = 0
+    H_1&: \beta_1 \ne 0
+\end{align}
+
+In order to assess this, we calculate the t-statistic using the following formula: $t = \frac{\beta_1 - 0}{S(\beta_1)}$.
+A p-value can be found by computing the area under the probability density function with $n-2$ degrees of freedom until $\alpha / 2$ and subtracting it from 1.
+
+\subsubsection{Prediction interval}
+The prediction interval is the interval in which 95\% of the predictions will end up being.
+This is calculated in a similar way as the confidence interval.
+
+\begin{equation}
+    PI = \left[\hat{Y_h} \pm t(\frac{1 - \alpha}{2}; n-2) S(\hat{Y_h}) \right]
+\end{equation}
+
+\subsection{Multiple Linear Regression}
+\subsubsection{The multiple linear regression model}
+When we add more variables to the model, we get a multiple linear regression model.
+This can be written as seen in Formula \ref{formula:multiple_linear_regression}.
+
+\begin{equation}
+    \begin{aligned}
+        Y_i &= \beta_0 + \beta_1 x_1 + \cdots + \beta_n x_n + \epsilon_i
+            &= \beta_0 + \sum_{k=1}^n \beta_k x_{ik} + \epsilon_i
+    \end{aligned}
+    \label{formula:multiple_linear_regression}
+\end{equation}
+
+The $\beta$ coefficients can be interpreted as follows (e.g. $\beta_1$): $\beta_1$ is the change in mean response when $x_1$ is increased by a unit and all other variables remain constant.
+
+Often there can exist interaction between variables, which can be added to the model by incorporating an interaction term $\beta_{12} x_1 x_2$. This can be interpreted as the additional effect on $y$, when $x_1$ is held constant and $x_2$ increases with one unit (and vice versa). For categorical variables, this is the effect of a certain combination of categories on $y$.
+
+\subsubsection{Estmation of the regression function}
+In order to fit the regression line, we again minimize the q-function (Formula \ref{formula:q_function_multi})
+
+\begin{equation}
+    Q = \sum_{i=1}^n \left(Y_i - \beta_0 - \beta_1x_{i1} - \cdots - \beta_{p-1}x_{i, p-1}\right)^2
+    \label{formula:q_function_multi}
+\end{equation}
+
+To do this, we solve the least squares normal equations, that take the form of $X'XB = X'Y$, with estimators $B = (X'X)^{-1} (X'Y)$
+
+\begin{equation}
+    \begin{aligned}
+    \left\{
+    \begin{aligned}
+        \frac{dQ}{d\beta_0} = \sum_{i=1}^{n} (y_i + \beta_0 + \beta_1 x_{i1} + \cdots + \beta_{p-1} x_{i, p-1}) = 0 \\
+        \frac{dQ}{d\beta_1} = \sum_{i=1}^{n} (y_i + \beta_0 + \beta_1 x_{i1} + \cdots + \beta_{p-1} x_{i, p-1})x_{i1} = 0 \\
+        \cdots\\
+        \frac{dQ}{d\beta_1} = \sum_{i=1}^{n} (y_i + \beta_0 + \beta_1 x_{i1} + \cdots + \beta_{p-1} x_{i, p-1})x_{i, p-1} = 0
+    \end{aligned}
+    \right.
+    \end{aligned}
+\end{equation}
