@@ -1,0 +1,64 @@
+\section{Causal Inference}
+\subsubsection{CI vs regular regression analysis}
+
+One major distinction that we need to make is the difference between causal inference and regression analysis.
+Regression analysis statistically models the relationship between a dependent variable and a set of independent variables. 
+However, this does not imply that these relationships are causal.
+Furthermore, regression analysis does not take into account the direction of the relationship.
+Demonstration of causality is a logical and experimental, rather than statistical, problem. 
+An apparently strong relationship between variables could stem from many causes, including the influence of other currently unmeasured variables.
+The causal inference methods try to balance the data in such a way that the confounders are equally distributed between the groups.
+This can be done by matching, IPW, using counterfactuals...
+
+\subsubsection{Identifiability assumptions}
+
+One set of assumptions that is taken to identify causal effects in observed data, are the identifiability assumptions: consistency, positivity, and exchangeability.
+These are important, as this enables the identification of causal effects in data that is not (perfectly) randomized. 
+
+\begin{itemize}
+    \item Exchangeability: The treatment groups need to be similar to each other in every aspect (except for the treatment). 
+    In observational studies this is often relaxed to conditional exchangeability, as the groups have different characteristics by design. 
+    This does mean that there should be no unmeasured confounders.
+    \item Consistency: The treatment of interest should be clearly defined and applied uniformly across individuals
+    \item Positivity: There should be a non-zero probability of being assigned to each treatment group for every individual given its characteristics.
+\end{itemize}
+
+\subsubsection{IPW}
+
+Inverse Probability weighting is a method used to minimize confounding when estimating treatment effects from observational data.
+By calculating a propensity score by using logistic regression on the treatment using the confounders, a weight can be derived.
+This propensity score is the chance of an observation to belong to the treated class given its covariates.
+In the thesis we get an ATE by calculating the weighted mean both populations (Formula \ref{formula:IPW}).
+
+\begin{equation}
+    \bar{x} = \frac{\sum_{i=1}^{n} w_i x_i}{\sum_{i=1}^{n} w_i}
+    \label{formula:IPW}
+\end{equation}
+
+\subsubsection{G-computation}
+
+G-computation is a causal inference technique that applies outcome modeling instead of treatment modeling.
+In this technique, a model is fitted to the outcome variables.
+In our case, this was a simple multivariate linear regression.
+Next, counterfactuals are constructed.
+This is the exact same dataframe twice: once with all individuals artificially put as 'diseased' and once with all individuals artificially set as 'healthy'.
+The model is used to predict the outcomes of the counterfactual individuals, which are then used to get an estimate of the ATE.
+
+\subsubsection{TMLE}
+
+Lastly, the TMLE technique is applied, which combines treatment modeling and outcome modeling in a very clever way.
+The analysis contains the following steps:
+
+\begin{itemize}
+    \item Fit an outcome model.
+    \item Predict counterfactuals.
+    \item Fit a treatment model.
+    \item Calculate the IPW for each observation, which they call the clever covariate. 
+    $H_A$ will be the corresponding IPW weight if the individual was treated or untreated.
+    \item The fluctuation parameter is calculated based on the outcome model estimate (for the right treatment) and the clever covariate. 
+    This is calculated using a logistic regression model using the logit transformed outcome as an offset.
+    The information in the fluctuation parameter tells us how much to change or fluctuate the initial outcome estimates.
+    \item The initial outcome estimates are updated using the fluctuation parameter.
+    \item Calculation of the ATE using these updated outcomes for both populations.
+\end{itemize}
+

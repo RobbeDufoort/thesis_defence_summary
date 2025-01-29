@@ -12,7 +12,7 @@ This is a summary of what was seen in the linear modeling course by Els Goetgheb
 \end{itemize}
 
 \subsubsection{Meaning and interpretation}
-Regression only shows association between the the dependent and independent variables.
+Regression only shows association between the dependent and independent variables.
 It is not because two things tend to go in the same direction, that a change in one is \textit{causing} the change in the other.
 It is possible that they are both causally responding to a third factor that is changing.
 Causal relationships need additional assumptions and/or data to be interpreted.
@@ -100,7 +100,7 @@ By dividing by the number of samples minus 2 (as we use two times $y$ in the for
 Maximum Likelihood Estimation can also be used in order to fit the parameters of the linear regression model.
 This works by maximizing the probability density function of $Y$ given a model (Formula \ref{formula:mle_linear_regression}), in this under the assumption that $Y$ is normally distributed.
 From the density distribution, we see that we have to estimate three parameters: $\beta_0$, $\beta_1$ and $\sigma^2$.
-Although, to do this, we need calculate the loglikelihood, as maximizing a sum is far easier than maximizing a product.
+Although, to do this, we need to calculate the loglikelihood, as maximizing a sum is far easier than maximizing a product.
 By taking the partial derivatives towards the parameters of interest, we can derive an estimator for them.
 As can be seen, for $\beta_0$ and $\beta_1$, we get the same normal equations (Formula \ref{formula:normal_equations}) as seen previously.
 
@@ -149,7 +149,7 @@ A p-value can be found by computing the area under the probability density funct
 
 \subsubsection{Prediction interval}
 The prediction interval is the interval in which 95\% of the predictions will end up being.
-This is calculated in a similar way as the confidence interval.
+This is calculated similarly as the confidence interval.
 
 \begin{equation}
     PI = \left[\hat{Y_h} \pm t(\frac{1 - \alpha}{2}; n-2) S(\hat{Y_h}) \right]
@@ -172,7 +172,7 @@ The $\beta$ coefficients can be interpreted as follows (e.g. $\beta_1$): $\beta_
 
 Often there can exist interaction between variables, which can be added to the model by incorporating an interaction term $\beta_{12} x_1 x_2$. This can be interpreted as the additional effect on $y$, when $x_1$ is held constant and $x_2$ increases with one unit (and vice versa). For categorical variables, this is the effect of a certain combination of categories on $y$.
 
-\subsubsection{Estmation of the regression function}
+\subsubsection{Estimation of the regression function}
 In order to fit the regression line, we again minimize the q-function (Formula \ref{formula:q_function_multi})
 
 \begin{equation}
@@ -194,3 +194,19 @@ To do this, we solve the least squares normal equations, that take the form of $
     \right.
     \end{aligned}
 \end{equation}
+
+\subsection{Weighted least squares}
+
+In weighted least squares, the idea is that weights can be used to deal with heteroscedastic data.
+Weights are user defined (e.g. the inverse of the variance of the variables).
+The weighted least squares estimator is defined as in Formula \ref{formula:WLS}.
+Deriving which weights to use is often the hardest part.
+
+\begin{equation}
+    \begin{aligned}
+        \hat{\beta}_{WLS}   &= \arg\min_{\beta} \sum_{i=1}^{n} \epsilon_i^{*2} 
+                            &= (X^TWX)^{-1} X^TWY
+    \end{aligned}
+    \label{formula:WLS}
+\end{equation}
+

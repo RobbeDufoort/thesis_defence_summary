@@ -2,8 +2,8 @@
 Next, we show how VoomCLR uses the Limma-Voom framework in order to account for compositional bias and the bias on the effect sizes.
 The first thing VoomCLR does, is CLR transforming the cell counts (Formula \ref{formula:CLR}).
 This is performed to deal with the composition bias.
-However, compositional transformations do not stabalize the variance (it is a function of the mean).
-For this reason, the transformed counts are inputed into the Limma framework to first account for the mean-variance structure using heteroscedasticity weights.
+However, compositional transformations do not stabilize the variance (it is a function of the mean).
+For this reason, the transformed counts are input into the Limma framework to first account for the mean-variance structure using heteroscedasticity weights.
 Next, the authors of the LinDA paper saw that the CLR transformation in combination with linear models result in biased effect sizes in respect to the effect sizes one would obtain based on the absolute abundances.
 In order to correct for this, the mode of the effect size across cell types is used.
 
@@ -28,7 +28,7 @@ Given this assumption, $\bar{\beta}$ can be estimated by shifting the histogram 
 The shift is our estimate for $\bar{\beta}$, i.e., $\hat{\bar{\beta}}$.
 
 The now bias corrected estimates are used in the models.
-The residual variance of the linear model is shrunken using Empirical Bayes and using the shrinked variance, moderated t- and F-statistics are calculated on the parameter.
+The residual variance of the linear model is shrunken using Empirical Bayes and using the shrunk variance, moderated t- and F-statistics are calculated on the parameter.
 The t-test tests to the null hypothesis that the coefficient is equal to zero.
 The F-test tests to the null hypothesis that the model has at least one non-zero coefficient.
 The F-statistic is calculated as $\frac{MSR}{MSE}$, with MSR the variation explained by the model and MSE the residual unexplained variation.
